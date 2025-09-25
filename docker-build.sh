@@ -3,7 +3,9 @@
 VERSION=0.9.92
 
 docker build --pull -t peterbuga/cronicle-docker .
-docker scan peterbuga/cronicle-docker:latest
+# docker scan peterbuga/cronicle-docker:latest
+docker scout quickview bluet/cronicle-docker:latest
+grype peterbuga/cronicle-docker:latest | grep -i -E '(High|Critical)'
 
 docker tag peterbuga/cronicle-docker:latest peterbuga/cronicle-docker:${VERSION}
 
@@ -13,14 +15,14 @@ docker tag peterbuga/cronicle-docker:latest peterbuga/cronicle-docker:${VERSION}
 #git push --tags
 
 # Fixes busybox trigger error https://github.com/tonistiigi/xx/issues/36#issuecomment-926876468
-docker run --privileged -it --rm tonistiigi/binfmt --install all
+#docker run --privileged -it --rm tonistiigi/binfmt --install all
 
-docker buildx create --use
+#docker buildx create --use
 
 while true; do
         read -p "Is VERSION=${VERSION} the current latest version? (We're going to build multi-platform images and push) [y/N]" yn
         case $yn in
-                [Yy]* ) docker buildx build -t peterbuga/cronicle-docker:latest -t peterbuga/cronicle-docker:${VERSION} --platform linux/amd64,linux/arm64/v8 --pull --push .; break;;
+                [Yy]* ) docker buildx build --builder cloud-bluet-test -t peterbuga/cronicle-docker:latest -t peterbuga/cronicle-docker:${VERSION} --platform linux/amd64,linux/arm64/v8 --pull --push .; break;;
                 [Nn]* ) break;;
                 * ) echo "";;
         esac

@@ -1,4 +1,4 @@
-FROM       docker:24.0
+FROM       docker:27
 LABEL      maintainer="BlueT - Matthew Lien - 練喆明 <bluet@bluet.org>"
 
 # Docker defaults
@@ -8,7 +8,10 @@ ENV        CRONICLE_WebServer__http_port=3012
 ENV        CRONICLE_WebServer__https_port=443
 ENV        EDITOR=nano
 
-RUN        apk add --no-cache nodejs npm git curl wget perl bash perl-pathtools tar procps nano tini python3
+# install updates and security patches while installing new packages
+# Ref: https://github.com/docker/docs/pull/12571
+RUN        apk add --no-cache --upgrade \
+		nodejs npm git curl wget perl bash perl-pathtools tar procps nano tini python3
 RUN        mkdir -p /opt/cronicle \
                 && cd /opt/cronicle \
                 && curl -L https://github.com/jhuckaby/Cronicle/archive/v${CRONICLE_VERSION}.tar.gz | tar zxvf - --strip-components 1 \
